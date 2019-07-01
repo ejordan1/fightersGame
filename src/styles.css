@@ -1,0 +1,43 @@
+#output{
+  display: none;
+}
+
+
+body {
+  text-align: center;
+  margin-top:2%;
+  background-color: #FFDAD0;
+}
+
+.card {
+  height:125px;
+  font-size:80px;
+}
+
+.linebottom {
+  border-bottom: 3px solid black;
+}
+
+.fightarea {
+  height:600px;
+}
+
+.topbar {
+  background-color: #CCCCFF;
+}
+
+.bottombar {
+  background-color: #01FFFF90;
+}
+
+.char1{
+  background-color: black;
+  height: 100px;
+  width: 100px;
+   position: absolute;
+   z-index: 2;
+}
+
+.attack {
+  width: 200px;
+}
