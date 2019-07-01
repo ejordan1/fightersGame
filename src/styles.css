@@ -33,6 +33,14 @@ body {
 .char1{
   background-color: black;
   height: 100px;
+  width: 200px;
+   position: absolute;
+   z-index: 2;
+}
+
+.char2{
+  border: 2px solid black;
+  height: 100px;
   width: 100px;
    position: absolute;
    z-index: 2;
