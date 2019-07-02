@@ -33,12 +33,24 @@ export class Cab{
 
 
 movement(direction){
-  if (direction > 0){
-    this.direction = "right";
-    this.posX += this.speed;
-  } else {
-    this.direction = "left";
-    this.posX -= this.speed;
+    if (direction > 0){
+      this.direction = "right";
+      this.posX += this.getSpeed();
+    } else {
+      this.direction = "left";
+      this.posX -= this.getSpeed();
+    }
+}
+
+getSpeed(){
+  if (this.state === 0){
+    return 3;
+  }
+  if (this.state === 1){
+    return 5;
+  }
+  if (this.state === 2 || this.state === 3){
+    return 7;
   }
 }
 }

@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/main2Player.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
@@ -19,7 +19,7 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       title: 'Roman_numbers',
-      template: './src/index.html',
+      template: './src/index2Player.html',
       inject: 'body'
     })
   ],
@@ -32,6 +32,12 @@ module.exports = {
           'css-loader'
         ]
       },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader'
+        ]
+    },
       {
         test: /\.js$/,
         exclude: [

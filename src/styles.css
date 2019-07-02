@@ -23,7 +23,8 @@ body {
 }
 
 .fightarea {
-  height:600px;
+  height:800px;
+  background: url('../img/stripes.png');
 }
 
 .topbar {
@@ -35,7 +36,7 @@ body {
   background-color: #01FFFF90;
 }
 
-.char1{
+.char1, .char3{
   background-color: black;
   height: 100px;
   width: 200px;
@@ -43,7 +44,7 @@ body {
    z-index: 2;
 }
 
-.char2{
+.char2, .char4{
   border: 2px solid black;
   height: 100px;
   width: 100px;

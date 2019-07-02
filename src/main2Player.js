@@ -10,20 +10,27 @@ let dropValues = [];
 let walkerRefs = [];
 let currentWalkers = [];
 let maxWalkers = 20;
+let p1Score = 0;
+let p2Score = 0;
 for(let i = 0; i < 8; i++){
   dropValues.push(i * 150 + 47);
 }
 // let cabsDisplay = [];
 let player1;
 let player2;
+let player3;
+let player4;
 
 let cabs = [];
 
-var cab1 = new Cab(400, 500, 4, 200);
+var cab1 = new Cab(400, 800, 4, 200);
 cabs.push(cab1);
-var cab2 = new Cab(800, 500, 4, 100);
+var cab2 = new Cab(800, 800, 4, 100);
 cabs.push(cab2);
-
+var cab3 = new Cab(730, 200, 4, 100);
+cabs.push(cab3);
+var cab4 = new Cab(400, 200, 4, 100);
+cabs.push(cab4);
 
 
 
@@ -58,18 +65,23 @@ $(function(){
   }
   player1 = document.querySelector(".char1");
   player2 = document.querySelector(".char2");
+  player3 = document.querySelector(".char3");
+  player4 = document.querySelector(".char4");
 
   setInterval(logM, 30);
-  setInterval(spawnWalker, 2000);
+  spawnWalker(1);
+  spawnWalker(-1);
+  setInterval(function(){spawnWalker(1);}, 5000);
+  setInterval(function(){spawnWalker(-1);}, 5000);
 
-  keypressing(65, 0); //left p1
-  keypressing(68, 1); //right p1
-  keypressing(87, 2); //up p1
-  keypressing(83, 3); //down p1
-  keypressing(37, 4); //left p2
-  keypressing(39, 5); //right p2
-  keypressing(38, 6); //up p2
-  keypressing(40, 7); //down p2
+  keypressing(90, 0); //left p1 z
+  keypressing(88, 1); //right p1 x
+  keypressing(86, 2); //left p1 v
+  keypressing(66, 3); //right p1 b
+  keypressing(188, 4); //left p2 ,
+  keypressing(190, 5); //right p2 .
+  keypressing(37, 6); //left p2 left arrow
+  keypressing(39, 7); //right p2 right arrow
 });
 
 function logM() {
@@ -81,72 +93,88 @@ function logM() {
     cabs[0].movement(1);
   }
   if (charMovement[2] === 1) {
-    cabs[0].attack();
-
-  }
-  if (charMovement[3] === 1) {
-    //
-  }
-  if (charMovement[4] === 1) {
     cabs[1].movement(-1);
   }
-  if (charMovement[5] === 1) {
+  if (charMovement[3] === 1) {
     cabs[1].movement(1);
   }
+  if (charMovement[4] === 1) {
+    cabs[2].movement(-1);
+  }
+  if (charMovement[5] === 1) {
+    cabs[2].movement(1);
+  }
   if (charMovement[6] === 1) {
-    //
+    cabs[3].movement(-1);
   }
   if (charMovement[7] === 1) {
-    //
+    cabs[3].movement(1);
   }
   displayCabs(cabs);
   displayWalkers();
   cab1.state = checkState(cab1.posX, cab2.posX, cab1);
-  
+  cab3.state = checkState(cab3.posX, cab4.posX, cab3);
+  cab2.state = cab1.state;
+  cab4.state = cab3.state;
   for(let i = currentWalkers.length - 1; i >= 0; i--){
     // debugger;
     currentWalkers[i].move();
     //if the walker is past y pos, then remove from array, increase score
     if (currentWalkers[i].posY > 700) {
-      if (currentWalkers[i].target != -1){
-        let a = currentWalkers[i].target;
-        let b = currentWalkers[i].posX;
-        if (Math.abs((currentWalkers[i].target * 150 + 47) - currentWalkers[i].posX) < 75){
-          console.log("reached target destination");
-          $(".bottombar").removeClass("yellow");
-        } else {
-          console.log("reached WRONG destination");
-          $(".bottombar").removeClass("yellow");
-        }
-      }
+      // if (currentWalkers[i].target != -1){
+      //   let a = currentWalkers[i].target;
+      //   let b = currentWalkers[i].posX;
+      //   if (Math.abs((currentWalkers[i].target * 150 + 47) - currentWalkers[i].posX) < 75){
+      //     console.log("reached target destination");
+      //     $(".bottombar").removeClass("yellow");
+      //   } else {
+      //     console.log("reached WRONG destination");
+      //     $(".bottombar").removeClass("yellow");
+      //   }
+      // }
     }
-    if (currentWalkers[i].posY > 850) {
+    if (currentWalkers[i].posY < 100) {
       currentWalkers.splice(i, 1);
+      p1Score += 100;
+      console.log("Player 1 scored! Total score: " + p1Score);
+    }
+    if (currentWalkers[i].posY > 1050) {
+      currentWalkers.splice(i, 1);
+      p2Score += 100;
+      console.log("Player 2 scored! Total score: " + p2Score);
     }
     peopleHunting(currentWalkers[i], cab1, i);
+    peopleHunting(currentWalkers[i], cab3, i);
   }
 }
 
+//recieving at opposite side of car
 function peopleHunting(person, car, personId) {
-
-
   if (car.posX <= person.posX && car.posX + 200 >= person.posX - 25 && car.posY <= person.posY + 25 && car.posY + 100 >= person.posY && car.state === 2) {
-    car.currentPersonTarget = Math.floor(Math.random() * 8);
-    console.log(car.currentPersonTarget + " : THIS IS CURRENT TARGET");
-    $("#c" + car.currentPersonTarget).addClass("yellow");
-    car.state = 3;
-    currentWalkers.splice(personId, 1);
+    if (car.posY < 400 && person.speed < 0){
+      car.state = 3;
+      currentWalkers.splice(personId, 1);
+    } else if(car.posY > 400 && person.speed > 0){
+      car.state = 3;
+      currentWalkers.splice(personId, 1);
+    }
+
   }
 }
 
 function checkState(cab1x, cab2x, car) {
   //to make cab
-  if (cab1.state === 3) {
+  if (car.state === 3) {
     if (cab1x >= cab2x || cab1x + 100 <= cab2x) {
-      let newWalk = new Walker(cab2x + 37.5,600,3);
-      newWalk.target = car.currentPersonTarget;
-      console.log(newWalk.target + ": target transfered to person")
-      car.currentPersonTarget = false;
+      let newWalk = new Walker(cab2x + 37.5,car.posY,3);
+      //newWalk.target = car.currentPersonTarget;
+      //GARBAGE CODE
+      if (car.posY > 400){
+        newWalk.reverseSpeed();
+      }
+
+      //console.log(newWalk.target + ": target transfered to person")
+      //car.currentPersonTarget = false;
       currentWalkers.push(newWalk);
         return 0;
     }
@@ -173,21 +201,10 @@ function displayCabs(){
     player2.style.left = cabs[1].posX + "px";
     player2.style.top = cabs[1].posY + "px";
   //});
-  if (cabs[0].state === 1) {
-    $('.char1').addClass("attack");
-  }
-
-  if (cabs[0].state === 0) {
-    $('.char1').removeClass("attack");
-  }
-  if (cabs[1].state === 1) {
-    $('.char2').addClass("attack");
-  }
-
-  if (cabs[1].state === 0) {
-    $('.char2').removeClass("attack");
-  }
-
+    player3.style.left = cabs[2].posX + "px";
+    player3.style.top = cabs[2].posY + "px";
+    player4.style.left = cabs[3].posX + "px";
+    player4.style.top = cabs[3].posY + "px";
 }
 
 
@@ -196,16 +213,26 @@ function Walker( startingPosX, startingPosY, speed){
   this.posX = startingPosX;
   this.posY = startingPosY;
   this.speed = speed;
-  this.target = -1;
+  //this.target = -1;
 }
 
 Walker.prototype.move = function(){
   this.posY += this.speed;
 }
 
-function spawnWalker(){
+Walker.prototype.reverseSpeed = function(){
+  this.speed = -this.speed;
+}
+
+function spawnWalker(direction){
   let r = Math.floor(Math.random() * 8);
-  let newWalk = new Walker(dropValues[r],200,3);
+  let newWalk;
+  if (direction < 0){
+      newWalk  = new Walker(dropValues[r],200,3);
+    } else {
+      newWalk  = new Walker(dropValues[r],900,3);
+      newWalk.reverseSpeed();
+    }
   currentWalkers.push(newWalk);
   console.log("SPAWNED NEW WALKER, TOTAL WALKERS: " + currentWalkers.length);
 }
