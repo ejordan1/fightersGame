@@ -2,6 +2,10 @@
   display: none;
 }
 
+#firstRow, #secondRow, #thirdRow{
+  width: 1200px;
+}
+
 
 body {
   text-align: center;
@@ -24,6 +28,7 @@ body {
 
 .topbar {
   background-color: #CCCCFF;
+  width:125px;
 }
 
 .bottombar {
@@ -48,4 +53,12 @@ body {
 
 .attack {
   width: 200px;
+}
+
+.walker {
+  background-color: orange;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  z-index: 2;
 }

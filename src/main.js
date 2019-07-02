@@ -2,20 +2,30 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import $ from 'jquery';
-import {Fighter} from "./fighter";
+import {Cab} from "./cab";
 
 // let char1xPos
 let charMovement = [0,0,0,0,0,0,0,0];
-// let fightersDisplay = [];
+let dropValues = [];
+let walkerRefs = [];
+let currentWalkers = [];
+let maxWalkers = 20;
+for(let i = 0; i < 8; i++){
+  dropValues.push(i * 150 + 47);
+}
+// let cabsDisplay = [];
 let player1;
 let player2;
 
-let fighters = [];
+let cabs = [];
 
-var fighter1 = new Fighter(400, 300, 4);
-fighters.push(fighter1);
-var fighter2 = new Fighter(800, 300, 4);
-fighters.push(fighter2);
+var cab1 = new Cab(400, 500, 4, 200);
+cabs.push(cab1);
+var cab2 = new Cab(800, 500, 4, 100);
+cabs.push(cab2);
+
+
+
 
 function keypressing(keyVal, arrayPos) {
   document.addEventListener('keydown', function(event){
@@ -36,10 +46,21 @@ function keypressing(keyVal, arrayPos) {
 
 
 $(function(){
+  // debugger;
+  let walkerOriginaQuery = document.querySelector(".walker");
+  let walkersQuery = document.querySelector(".walkers");
+  for(let i = 0; i < maxWalkers; i++){
+    let walkerClone = walkerOriginaQuery.cloneNode(true);
+    // walkerClone.style.top = i * 50 + "px";
+    // walkerClone.style.left = i * 50 + "px";
+    walkerRefs.push(walkerClone);
+    walkersQuery.appendChild(walkerClone);
+  }
   player1 = document.querySelector(".char1");
   player2 = document.querySelector(".char2");
 
   setInterval(logM, 30);
+  setInterval(spawnWalker, 2000);
 
   keypressing(65, 0); //left p1
   keypressing(68, 1); //right p1
@@ -52,60 +73,133 @@ $(function(){
 });
 
 function logM() {
-
-  console.log("running");
+  //console.log("running");
   if (charMovement[0] === 1) {
-    fighters[0].movement(-1);
+    cabs[0].movement(-1);
   }
   if (charMovement[1] === 1) {
-    fighters[0].movement(1);
+    cabs[0].movement(1);
   }
   if (charMovement[2] === 1) {
-    fighters[0].attack();
+    cabs[0].attack();
 
   }
   if (charMovement[3] === 1) {
     //
   }
   if (charMovement[4] === 1) {
-    fighters[1].movement(-1);
+    cabs[1].movement(-1);
   }
   if (charMovement[5] === 1) {
-    fighters[1].movement(1);
+    cabs[1].movement(1);
   }
   if (charMovement[6] === 1) {
-    fighters[1].attack();
+    //
   }
   if (charMovement[7] === 1) {
     //
   }
-  displayFighters(fighters);
+  displayCabs(cabs);
+  displayWalkers();
+  cab1.state = checkState(cab1.posX, cab2.posX);
+  for(let i = currentWalkers.length - 1; i >= 0; i--){
+    // debugger;
+    currentWalkers[i].move();
+    //if the walker is past y pos, then remove from array, increase score
+    if (currentWalkers[i].posY > 850) {
+      currentWalkers.splice(i, 1);
+    }
+    peopleHunting(currentWalkers[i], cab1);
+  }
 }
 
-function displayFighters(){
-  //fighters.forEach(function(fighter){
+function peopleHunting(person, car) {
+
+  if (car.posY <= person.posY + 25 && car.posY + 100 >= person.posY){
+
+  }
+  if (car.posX <= person.posX && car.posX + 200 >= person.posX - 25 && car.posY <= person.posY + 25 && car.posY + 100 >= person.posY && car.state === 2) {
+    car.state = 3;
+    console.log(cab1.state);
+  }
+}
+
+function checkState(cab1x, cab2x) {
+  //to make cab
+  if (cab1.state === 3) {
+    return 3;
+  } else if (cab1x <= cab2x && cab1x + 100 >= cab2x) {
+    if (cab1x + 20 <= cab2x && cab1x + 80 >= cab2x) {
+      //take new passenger
+      return 2;
+    } else{
+      //not broken but still carry
+      return 1;
+    }
+  } else {
+    //to break cab
+    return 0;
+  }
+}
+
+function displayCabs(){
+  //cabs.forEach(function(cab){
   // debugger;
-    player1.style.left = fighters[0].posX + "px";
-    player1.style.top = fighters[0].posY + "px";
-    player2.style.left = fighters[1].posX + "px";
-    player2.style.top = fighters[1].posY + "px";
+    player1.style.left = cabs[0].posX + "px";
+    player1.style.top = cabs[0].posY + "px";
+    player2.style.left = cabs[1].posX + "px";
+    player2.style.top = cabs[1].posY + "px";
   //});
-  if (fighters[0].state === 1) {
+  if (cabs[0].state === 1) {
     $('.char1').addClass("attack");
   }
 
-  if (fighters[0].state === 0) {
+  if (cabs[0].state === 0) {
     $('.char1').removeClass("attack");
   }
-  if (fighters[1].state === 1) {
+  if (cabs[1].state === 1) {
     $('.char2').addClass("attack");
   }
 
-  if (fighters[1].state === 0) {
+  if (cabs[1].state === 0) {
     $('.char2').removeClass("attack");
   }
-  console.log(fighters[0].state);
 
 }
 
-//display fighters
+
+
+function Walker( startingPosX, startingPosY, speed){
+  this.posX = startingPosX;
+  this.posY = startingPosY;
+  this.speed = speed;
+}
+
+Walker.prototype.move = function(){
+  this.posY += this.speed;
+}
+
+function spawnWalker(){
+  let r = Math.floor(Math.random() * 8);
+  let newWalk = new Walker(dropValues[r],200,3);
+  currentWalkers.push(newWalk);
+  console.log("SPAWNED NEW WALKER, TOTAL WALKERS: " + currentWalkers.length);
+}
+
+//still need to add attribute back eventually
+function displayWalkers(){
+  for(let i = 0; i < maxWalkers; i++){
+    walkerRefs[i].setAttribute("hidden", "hidden");
+  }
+  for(let i = 0; i < currentWalkers.length; i++){
+    walkerRefs[i].removeAttribute('hidden');
+    if (i < maxWalkers){
+  //  console.log(currentWalkers[i].posY + "is y, and x is: " + currentWalkers[i].posX);
+    walkerRefs[i].style.top = currentWalkers[i].posY + "px";
+    walkerRefs[i].style.left = currentWalkers[i].posX + "px";
+  }
+  }
+}
+//
+
+//display cabs
