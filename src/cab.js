@@ -47,10 +47,10 @@ getSpeed(){
     return 3;
   }
   if (this.state === 1){
-    return 5;
+    return 4;
   }
   if (this.state === 2 || this.state === 3){
-    return 7;
+    return 5;
   }
 }
 }

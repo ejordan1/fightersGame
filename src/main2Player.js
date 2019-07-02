@@ -69,10 +69,11 @@ $(function(){
   player4 = document.querySelector(".char4");
 
   setInterval(logM, 30);
-  spawnWalker(1);
-  spawnWalker(-1);
-  setInterval(function(){spawnWalker(1);}, 5000);
-  setInterval(function(){spawnWalker(-1);}, 5000);
+  setTimeout(function(){spawnWalker(1);}, 2000);
+  setTimeout(function(){spawnWalker(-1);}, 3000);
+
+  setInterval(function(){spawnWalker(1);}, 7000);
+  setInterval(function(){spawnWalker(-1);}, 7000);
 
   keypressing(90, 0); //left p1 z
   keypressing(88, 1); //right p1 x
@@ -136,12 +137,12 @@ function logM() {
     if (currentWalkers[i].posY < 100) {
       currentWalkers.splice(i, 1);
       p1Score += 100;
-      console.log("Player 1 scored! Total score: " + p1Score);
+      $(".score1").html("Player 1 score: " + p1Score);
     }
     if (currentWalkers[i].posY > 1050) {
       currentWalkers.splice(i, 1);
       p2Score += 100;
-      console.log("Player 2 scored! Total score: " + p2Score);
+      $(".score2").html("Player 2 score: " + p2Score);
     }
     peopleHunting(currentWalkers[i], cab1, i);
     peopleHunting(currentWalkers[i], cab3, i);
@@ -228,9 +229,9 @@ function spawnWalker(direction){
   let r = Math.floor(Math.random() * 8);
   let newWalk;
   if (direction < 0){
-      newWalk  = new Walker(dropValues[r],200,3);
+      newWalk  = new Walker(dropValues[r],200,2);
     } else {
-      newWalk  = new Walker(dropValues[r],900,3);
+      newWalk  = new Walker(dropValues[r],900,2);
       newWalk.reverseSpeed();
     }
   currentWalkers.push(newWalk);

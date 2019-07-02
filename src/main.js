@@ -102,7 +102,7 @@ function logM() {
   displayCabs(cabs);
   displayWalkers();
   cab1.state = checkState(cab1.posX, cab2.posX, cab1);
-  
+
   for(let i = currentWalkers.length - 1; i >= 0; i--){
     // debugger;
     currentWalkers[i].move();
