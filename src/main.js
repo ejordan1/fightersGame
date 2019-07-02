@@ -101,32 +101,54 @@ function logM() {
   }
   displayCabs(cabs);
   displayWalkers();
-  cab1.state = checkState(cab1.posX, cab2.posX);
+  cab1.state = checkState(cab1.posX, cab2.posX, cab1);
   for(let i = currentWalkers.length - 1; i >= 0; i--){
     // debugger;
     currentWalkers[i].move();
     //if the walker is past y pos, then remove from array, increase score
+    if (currentWalkers[i].posY > 700) {
+      if (currentWalkers[i].target != -1){
+        let a = currentWalkers[i].target;
+        let b = currentWalkers[i].posX;
+        if (Math.abs((currentWalkers[i].target * 150 + 47) - currentWalkers[i].posX) < 75){
+          console.log("reached target destination");
+          $(".bottombar").removeClass("yellow");
+        } else {
+          console.log("reached WRONG destination");
+          $(".bottombar").removeClass("yellow");
+        }
+      }
+    }
     if (currentWalkers[i].posY > 850) {
       currentWalkers.splice(i, 1);
     }
-    peopleHunting(currentWalkers[i], cab1);
+    peopleHunting(currentWalkers[i], cab1, i);
   }
 }
 
-function peopleHunting(person, car) {
+function peopleHunting(person, car, personId) {
 
-  if (car.posY <= person.posY + 25 && car.posY + 100 >= person.posY){
 
-  }
   if (car.posX <= person.posX && car.posX + 200 >= person.posX - 25 && car.posY <= person.posY + 25 && car.posY + 100 >= person.posY && car.state === 2) {
+    car.currentPersonTarget = Math.floor(Math.random() * 8);
+    console.log(car.currentPersonTarget + " : THIS IS CURRENT TARGET");
+    $("#c" + car.currentPersonTarget).addClass("yellow");
     car.state = 3;
-    console.log(cab1.state);
+    currentWalkers.splice(personId, 1);
   }
 }
 
-function checkState(cab1x, cab2x) {
+function checkState(cab1x, cab2x, car) {
   //to make cab
   if (cab1.state === 3) {
+    if (cab1x >= cab2x || cab1x + 100 <= cab2x) {
+      let newWalk = new Walker(cab2x + 37.5,600,3);
+      newWalk.target = car.currentPersonTarget;
+      console.log(newWalk.target + ": target transfered to person")
+      car.currentPersonTarget = false;
+      currentWalkers.push(newWalk);
+        return 0;
+    }
     return 3;
   } else if (cab1x <= cab2x && cab1x + 100 >= cab2x) {
     if (cab1x + 20 <= cab2x && cab1x + 80 >= cab2x) {
@@ -173,6 +195,7 @@ function Walker( startingPosX, startingPosY, speed){
   this.posX = startingPosX;
   this.posY = startingPosY;
   this.speed = speed;
+  this.target = -1;
 }
 
 Walker.prototype.move = function(){
